@@ -23,9 +23,19 @@ import {
   InputLabel,
   FormControl,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Stack,
+  Chip,
+  Grid,
+  Divider
 } from "@mui/material";
-import { Edit as EditIcon, Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { 
+  Edit as EditIcon, 
+  Add as AddIcon, 
+  Delete as DeleteIcon,
+  AddPhotoAlternate as AddPhotoIcon,
+  Clear as ClearIcon
+} from "@mui/icons-material";
 
 const Produse = () => {
   const [products, setProducts] = useState([]);
@@ -42,8 +52,9 @@ const Produse = () => {
     categorie: "",
     stoc: 0,
     laComanda: false,
-    imagine: ""
+    imagini: []
   });
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   // Fetch products data
   useEffect(() => {
@@ -61,7 +72,7 @@ const Produse = () => {
             categorie: "Cămăși",
             stoc: 120,
             laComanda: false,
-            imagine: "/imagini/camasa1.jpg"
+            imagini: ["/imagini/camasa1.jpg", "/imagini/camasa2.jpg"]
           },
           {
             id: "p2",
@@ -71,7 +82,7 @@ const Produse = () => {
             categorie: "Pantaloni",
             stoc: 80,
             laComanda: false,
-            imagine: "/imagini/blugi1.jpg"
+            imagini: ["/imagini/blugi1.jpg"]
           },
           {
             id: "p3",
@@ -81,7 +92,7 @@ const Produse = () => {
             categorie: "Geci",
             stoc: 0,
             laComanda: true,
-            imagine: "/imagini/geaca1.jpg"
+            imagini: ["/imagini/geaca1.jpg", "/imagini/geaca2.jpg", "/imagini/geaca3.jpg"]
           }
         ];
         
@@ -106,8 +117,9 @@ const Produse = () => {
       categorie: product.categorie,
       stoc: product.stoc,
       laComanda: product.laComanda || false,
-      imagine: product.imagine || ""
+      imagini: product.imagini || []
     });
+    setNewImageUrl("");
     setOpen(true);
   };
 
@@ -121,8 +133,9 @@ const Produse = () => {
       categorie: "",
       stoc: 0,
       laComanda: false,
-      imagine: ""
+      imagini: []
     });
+    setNewImageUrl("");
     setOpen(true);
   };
 
@@ -166,6 +179,27 @@ const Produse = () => {
     });
   };
 
+  const handleNewImageChange = (e) => {
+    setNewImageUrl(e.target.value);
+  };
+
+  const handleAddImage = () => {
+    if (newImageUrl.trim() !== "") {
+      setFormData({
+        ...formData,
+        imagini: [...formData.imagini, newImageUrl.trim()]
+      });
+      setNewImageUrl("");
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData({
+      ...formData,
+      imagini: formData.imagini.filter((_, index) => index !== indexToRemove)
+    });
+  };
+
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData({
@@ -204,30 +238,56 @@ const Produse = () => {
     handleClose();
   };
 
-  const renderImagePreview = () => {
-    if (!formData.imagine) return null;
+  const renderImagePreviews = () => {
+    if (formData.imagini.length === 0) return null;
     
     return (
-      <Box sx={{ mt: 2, textAlign: 'center' }}>
+      <Box sx={{ mt: 3 }}>
         <Typography variant="subtitle2" gutterBottom>
-          Previzualizare Imagine
+          Previzualizare Imagini
         </Typography>
-        <Box 
-          component="img" 
-          src={formData.imagine}
-          alt="Previzualizare produs"
-          sx={{ 
-            maxWidth: '100%', 
-            maxHeight: 200,
-            objectFit: 'contain',
-            borderRadius: 1,
-            border: '1px solid #e0e0e0'
-          }}
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/200x200?text=Imagine+Indisponibilă";
-          }}
-        />
+        <Grid container spacing={2}>
+          {formData.imagini.map((imageUrl, index) => (
+            <Grid item xs={6} sm={4} md={3} key={index}>
+              <Box sx={{ position: 'relative' }}>
+                <Box 
+                  component="img" 
+                  src={imageUrl}
+                  alt={`Imagine produs ${index + 1}`}
+                  sx={{ 
+                    width: '100%', 
+                    height: 150,
+                    objectFit: 'contain',
+                    borderRadius: 1,
+                    border: '1px solid #e0e0e0'
+                  }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150x150?text=Imagine+Indisponibilă";
+                  }}
+                />
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    position: 'absolute', 
+                    top: 0, 
+                    right: 0,
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.9)',
+                    }
+                  }}
+                  onClick={() => handleRemoveImage(index)}
+                >
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+              </Box>
+              <Typography variant="caption" sx={{ display: 'block', mt: 0.5, textAlign: 'center' }}>
+                Imagine {index + 1}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     );
   };
@@ -267,10 +327,10 @@ const Produse = () => {
                 <TableRow key={product.id} hover>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {product.imagine ? (
+                      {product.imagini && product.imagini.length > 0 ? (
                         <Box 
                           component="img" 
-                          src={product.imagine}
+                          src={product.imagini[0]}
                           alt={product.nume}
                           sx={{ 
                             width: 50, 
@@ -300,7 +360,14 @@ const Produse = () => {
                           <Typography variant="caption" color="textSecondary">No Image</Typography>
                         </Box>
                       )}
-                      <Typography>{product.nume}</Typography>
+                      <Box>
+                        <Typography>{product.nume}</Typography>
+                        {product.imagini && product.imagini.length > 1 && (
+                          <Typography variant="caption" color="textSecondary">
+                            +{product.imagini.length - 1} imagini suplimentare
+                          </Typography>
+                        )}
+                      </Box>
                     </Box>
                   </TableCell>
                   <TableCell>{product.categorie}</TableCell>
@@ -374,19 +441,56 @@ const Produse = () => {
               onChange={handleInputChange}
             />
 
-            <TextField
-              margin="normal"
-              fullWidth
-              id="imagine"
-              label="Link Imagine Produs"
-              name="imagine"
-              value={formData.imagine}
-              onChange={handleInputChange}
-              placeholder="https://example.com/imagine.jpg"
-              helperText="Introduceți un URL valid către o imagine"
-            />
+            <Box sx={{ mt: 3, mb: 1 }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Imagini Produs
+              </Typography>
+              <Box sx={{ display: 'flex', mb: 1 }}>
+                <TextField
+                  fullWidth
+                  id="newImageUrl"
+                  label="Link Imagine Produs"
+                  value={newImageUrl}
+                  onChange={handleNewImageChange}
+                  placeholder="https://example.com/imagine.jpg"
+                  sx={{ mr: 1 }}
+                />
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={handleAddImage}
+                  startIcon={<AddPhotoIcon />}
+                  disabled={!newImageUrl.trim()}
+                >
+                  Adaugă
+                </Button>
+              </Box>
+              <Typography variant="caption" color="textSecondary">
+                Introduceți URL-uri către imaginile produsului. Adăugați câte o imagine pe rând.
+              </Typography>
+            </Box>
+
+            {formData.imagini.length > 0 && (
+              <Box sx={{ mt: 2, mb: 2 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Imagini adăugate ({formData.imagini.length}):
+                </Typography>
+                <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                  {formData.imagini.map((url, index) => (
+                    <Chip
+                      key={index}
+                      label={`Imagine ${index + 1}`}
+                      onDelete={() => handleRemoveImage(index)}
+                      sx={{ mb: 1 }}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
+
+            {renderImagePreviews()}
             
-            {renderImagePreview()}
+            <Divider sx={{ my: 3 }} />
             
             <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
               <TextField
@@ -452,7 +556,12 @@ const Produse = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Anulează</Button>
-          <Button onClick={handleSave} variant="contained" color="primary">
+          <Button 
+            onClick={handleSave} 
+            variant="contained" 
+            color="primary"
+            disabled={formData.nume === "" || formData.pret <= 0 || (!formData.laComanda && formData.stoc < 0)}
+          >
             {isAdding ? "Adaugă" : "Salvează"}
           </Button>
         </DialogActions>
