@@ -1,0 +1,91 @@
+{
+  "produse": [
+    {
+      "id": "p1",
+      "nume": "Cămașă casual pentru bărbați",
+      "descriere": "O cămașă confortabilă și stilată pentru bărbați.",
+      "pret": 129.99,
+      "categorie": "Cămăși",
+      "stoc": 120,
+      "imagine": "/imagini/camasa1.jpg"
+    },
+    {
+      "id": "p2",
+      "nume": "Blugi slim fit pentru bărbați",
+      "descriere": "Blugi slim fit la modă, perfecți pentru ieșiri casual.",
+      "pret": 199.99,
+      "categorie": "Pantaloni",
+      "stoc": 80,
+      "imagine": "/imagini/blugi1.jpg"
+    },
+    {
+      "id": "p3",
+      "nume": "Geacă de piele pentru bărbați",
+      "descriere": "Geacă premium din piele pentru bărbați eleganți.",
+      "pret": 499.99,
+      "categorie": "Geci",
+      "stoc": 45,
+      "imagine": "/imagini/geaca1.jpg"
+    }
+  ],
+  "clienti": [
+    {
+      "id": "c1",
+      "nume_companie": "Alpha Retail",
+      "persoana_contact": "Ion Popescu",
+      "email": "ion@alpharetail.ro",
+      "telefon": "+40 721 123 456",
+      "adresa": "Str. Pieței 123, București"
+    },
+    {
+      "id": "c2",
+      "nume_companie": "Distribuitor Beta",
+      "persoana_contact": "Maria Ionescu",
+      "email": "maria@betadistrib.ro",
+      "telefon": "+40 743 234 567",
+      "adresa": "Bd. Comerțului 456, Cluj-Napoca"
+    },
+    {
+      "id": "c3",
+      "nume_companie": "Gamma En-Gros",
+      "persoana_contact": "Mihai Georgescu",
+      "email": "mihai@gammaengros.ro",
+      "telefon": "+40 732 345 678",
+      "adresa": "Calea Afacerii 789, Timișoara"
+    }
+  ],
+  "comenzi": [
+    {
+      "id": "o1",
+      "id_client": "c1",
+      "produse": [
+        { "id_produs": "p1", "cantitate": 10 },
+        { "id_produs": "p2", "cantitate": 5 }
+      ],
+      "total": 2299.85,
+      "data": "2025-05-01",
+      "status": "Expediată"
+    },
+    {
+      "id": "o2",
+      "id_client": "c2",
+      "produse": [
+        { "id_produs": "p3", "cantitate": 2 }
+      ],
+      "total": 999.98,
+      "data": "2025-05-10",
+      "status": "În procesare"
+    },
+    {
+      "id": "o3",
+      "id_client": "c3",
+      "produse": [
+        { "id_produs": "p1", "cantitate": 20 },
+        { "id_produs": "p3", "cantitate": 1 }
+      ],
+      "total": 2799.79,
+      "data": "2025-05-15",
+      "status": "Livrată"
+    }
+  ]
+}

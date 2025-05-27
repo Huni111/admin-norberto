@@ -2,6 +2,11 @@ import { useState, Suspense } from 'react'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Root from './Root'
+import PaginaStart from '../pages/index'
+import Setari from '../pages/Setari'
+import Comenzi from '../pages/Comenzi'
+import Produse from '../pages/Produse'
+import Clienti from '../pages/Clinenti'
 
 function App() {
 
@@ -14,31 +19,31 @@ function App() {
         {
           path: '/', element:
             <Suspense fallback={<div>Loading...</div>}>
-              <div>Tablou de bord</div>
+             < PaginaStart />
             </Suspense>
         },
         {
           path: '/produse', element:
             <Suspense fallback={<div>Loading...</div>}>
-              <div>Produse</div>
+              < Produse />
             </Suspense>
         },
         {
           path: '/comenzi', element:
             <Suspense fallback={<div>Loading...</div>}>
-              <div>Comenzi</div>
+              < Comenzi />
             </Suspense>
         },
         {
           path: '/clienti', element:
             <Suspense fallback={<div>Loading...</div>}>
-              <div>Clienți (Companii)</div>
+              < Clienti />
             </Suspense>
         },
         {
           path: '/setari', element:
             <Suspense fallback={<div>Loading...</div>}>
-              <div>Setări</div>
+             < Setari />
             </Suspense>
         },
 
