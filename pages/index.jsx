@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@mui/material'; // Importăm direct din Material-UI
 import { Grid, Box, Typography, Paper } from '@mui/material';
-import { CalendarToday as Calendar, Group as Users, ShoppingBag, Inventory as Package } from '@mui/icons-material';
+import { CalendarToday as Calendar, Group as Users, ShoppingBag, Inventory as Package, AttachMoney as Money } from '@mui/icons-material';
 
 export default function PaginaStart() {
   const [stats, setStats] = useState({
@@ -12,6 +12,12 @@ export default function PaginaStart() {
       lastYear: 0
     },
     orders: {
+      total: 0,
+      lastWeek: 0,
+      lastMonth: 0,
+      lastYear: 0
+    },
+    amounts: {
       total: 0,
       lastWeek: 0,
       lastMonth: 0,
@@ -136,6 +142,9 @@ export default function PaginaStart() {
         // Într-o aplicație reală, ați avea date istorice cu date din trecut
         // Pentru acest exemplu, vom simula câțiva clienți/comenzi noi în fiecare perioadă de timp
 
+        // Calcularea sumelor comenzilor pentru fiecare perioadă
+        const totalAmount = data.comenzi.reduce((sum, order) => sum + order.total, 0);
+        
         setStats({
           customers: {
             total: data.clienti.length,
@@ -148,6 +157,12 @@ export default function PaginaStart() {
             lastWeek: 1, // Simulăm 1 comandă nouă în ultima săptămână
             lastMonth: 2, // Simulăm 2 comenzi noi în ultima lună
             lastYear: 3  // Simulăm că toate cele 3 comenzi au fost adăugate în ultimul an
+          },
+          amounts: {
+            total: totalAmount,
+            lastWeek: 999.98,  // Simulăm suma pentru ultima săptămână
+            lastMonth: 3299.83, // Simulăm suma pentru ultima lună
+            lastYear: 6099.62  // Simulăm suma pentru ultimul an (suma tuturor comenzilor)
           },
           products: {
             total: data.produse.length
@@ -176,6 +191,37 @@ export default function PaginaStart() {
   const chartLabels = ['Ultima Săptămână', 'Ultima Lună', 'Ultimul An'];
   
   const renderSimpleChart = (title, dataKey) => {
+    const getBarHeight = (idx) => {
+      if (dataKey === 'customers') {
+        return stats.customers[['lastWeek', 'lastMonth', 'lastYear'][idx]] * 30;
+      } else if (dataKey === 'orders') {
+        return stats.orders[['lastWeek', 'lastMonth', 'lastYear'][idx]] * 30;
+      } else if (dataKey === 'amounts') {
+        // Folosim valori proporționale pentru a afișa sumele
+        const max = Math.max(stats.amounts.lastWeek, stats.amounts.lastMonth, stats.amounts.lastYear);
+        return (stats.amounts[['lastWeek', 'lastMonth', 'lastYear'][idx]] / max) * 80;
+      }
+      return 0;
+    };
+
+    const getValue = (idx) => {
+      if (dataKey === 'customers') {
+        return stats.customers[['lastWeek', 'lastMonth', 'lastYear'][idx]];
+      } else if (dataKey === 'orders') {
+        return stats.orders[['lastWeek', 'lastMonth', 'lastYear'][idx]];
+      } else if (dataKey === 'amounts') {
+        return stats.amounts[['lastWeek', 'lastMonth', 'lastYear'][idx]].toFixed(2) + ' RON';
+      }
+      return 0;
+    };
+
+    const getBarColor = () => {
+      if (dataKey === 'customers') return '#8884d8';
+      if (dataKey === 'orders') return '#82ca9d';
+      if (dataKey === 'amounts') return '#ffc658';
+      return '#8884d8';
+    };
+
     return (
       <Card>
         <CardHeader title={title} />
@@ -204,10 +250,8 @@ export default function PaginaStart() {
                     sx={{ 
                       flex: 1, 
                       mx: 1, 
-                      height: `${dataKey === 'customers' ? 
-                                stats.customers[['lastWeek', 'lastMonth', 'lastYear'][idx]] * 30 : 
-                                stats.orders[['lastWeek', 'lastMonth', 'lastYear'][idx]] * 30}%`,
-                      bgcolor: dataKey === 'customers' ? '#8884d8' : '#82ca9d',
+                      height: `${getBarHeight(idx)}%`,
+                      bgcolor: getBarColor(),
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'flex-end',
@@ -216,9 +260,7 @@ export default function PaginaStart() {
                     }}
                   >
                     <Typography variant="body2" color="white" sx={{ mb: 1 }}>
-                      {dataKey === 'customers' ? 
-                        stats.customers[['lastWeek', 'lastMonth', 'lastYear'][idx]] : 
-                        stats.orders[['lastWeek', 'lastMonth', 'lastYear'][idx]]}
+                      {getValue(idx)}
                     </Typography>
                   </Box>
                 ))}
@@ -317,18 +359,43 @@ export default function PaginaStart() {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Adăugăm un nou card pentru suma totală a comenzilor */}
+      <Grid container spacing={4} sx={{ mb: 4 }}>
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography color="textSecondary" gutterBottom>
+                    Suma Totală Comenzi
+                  </Typography>
+                  <Typography variant="h5" component="h2">
+                    {stats.amounts.total.toFixed(2)} RON
+                  </Typography>
+                </Box>
+                <Money sx={{ color: '#f59e0b' }} />
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
       
       <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
         Analiza pe Perioade
       </Typography>
       
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           {renderSimpleChart("Clienți Noi pe Perioade", "customers")}
         </Grid>
         
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           {renderSimpleChart("Comenzi Noi pe Perioade", "orders")}
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          {renderSimpleChart("Sume Comenzi pe Perioade", "amounts")}
         </Grid>
       </Grid>
       
@@ -344,6 +411,7 @@ export default function PaginaStart() {
               <CardContent>
                 <Typography>Clienți Noi: {stats.customers.lastWeek}</Typography>
                 <Typography>Comenzi Noi: {stats.orders.lastWeek}</Typography>
+                <Typography>Suma Comenzi: {stats.amounts.lastWeek.toFixed(2)} RON</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -354,6 +422,7 @@ export default function PaginaStart() {
               <CardContent>
                 <Typography>Clienți Noi: {stats.customers.lastMonth}</Typography>
                 <Typography>Comenzi Noi: {stats.orders.lastMonth}</Typography>
+                <Typography>Suma Comenzi: {stats.amounts.lastMonth.toFixed(2)} RON</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -364,6 +433,7 @@ export default function PaginaStart() {
               <CardContent>
                 <Typography>Clienți Noi: {stats.customers.lastYear}</Typography>
                 <Typography>Comenzi Noi: {stats.orders.lastYear}</Typography>
+                <Typography>Suma Comenzi: {stats.amounts.lastYear.toFixed(2)} RON</Typography>
               </CardContent>
             </Card>
           </Grid>
