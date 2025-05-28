@@ -16,9 +16,9 @@ const SideBar = () => {
   const menuItems = [
     { id: "dashboard", title: "Tablou de bord", icon: <FaThLarge size={24} />, path: "/" },
     { id: "products", title: "Produse", icon: <FaBoxOpen size={24} />, path: "/produse" },
-    { id: "orders", title: "Comenzi", icon: <FaShoppingCart size={24} />, path: "/orders" },
-    { id: "clients", title: "Clienți", icon: <FaUsers size={24} />, path: "/clients" },
-    { id: "settings", title: "Setări", icon: <FaCog size={24} />, path: "/settings" }
+    { id: "orders", title: "Comenzi", icon: <FaShoppingCart size={24} />, path: "/comenzi" },
+    { id: "clients", title: "Clienți", icon: <FaUsers size={24} />, path: "/clienti" },
+    { id: "settings", title: "Setări", icon: <FaCog size={24} />, path: "/setari" }
   ];
 
   return (
